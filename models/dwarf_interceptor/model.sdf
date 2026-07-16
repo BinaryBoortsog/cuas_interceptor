@@ -1,0 +1,288 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="dwarf_interceptor">
+    <pose>0 0 0.5 0 0 0</pose>
+    <self_collide>false</self_collide>
+
+    <!-- ================= BODY ================= -->
+    <link name="base_link">
+      <inertial>
+        <mass>2.0</mass>
+        <inertia>
+          <ixx>0.03167</ixx><iyy>0.03167</iyy><izz>0.01</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <visual name="base_visual">
+        <geometry><cylinder><radius>0.1</radius><length>0.4</length></cylinder></geometry>
+        <material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material>
+      </visual>
+      <collision name="base_collision">
+        <geometry><cylinder><radius>0.1</radius><length>0.4</length></cylinder></geometry>
+      </collision>
+      <!-- body contact sensor: LIVES IN base_link, references base_collision -->
+      <sensor name="body_contact" type="contact">
+        <contact>
+          <collision>base_collision</collision>
+          <topic>/dwarf_interceptor/body/contact</topic>
+        </contact>
+        <always_on>true</always_on>
+        <update_rate>1000</update_rate>
+      </sensor>
+    </link>
+
+    <!-- ================= SPINNING HUB ================= -->
+    <link name="hub_link">
+      <pose>0 0 0.25 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.00222</ixx><iyy>0.00222</iyy><izz>0.0036</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <visual name="hub_visual">
+        <geometry><cylinder><radius>0.12</radius><length>0.1</length></cylinder></geometry>
+        <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse></material>
+      </visual>
+      <collision name="hub_collision">
+        <geometry><cylinder><radius>0.12</radius><length>0.1</length></cylinder></geometry>
+      </collision>
+    </link>
+
+    <joint name="spin_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>hub_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower><upper>1e16</upper>
+          <effort>50</effort>
+          <velocity>900</velocity>
+        </limit>
+        <dynamics><damping>0.005</damping><friction>0.01</friction></dynamics>
+      </axis>
+    </joint>
+
+    <!-- ================= FLAIL ARMS (x4) ================= -->
+    <!-- ARM 1: +X -->
+    <link name="arm_1">
+      <pose>0.15 0 0.25 0 0 0</pose>
+      <inertial>
+        <pose>0.075 0 0 0 0 0</pose>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.00006</ixx><iyy>0.0027</iyy><izz>0.0027</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <visual name="arm_1_visual">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+        <material><ambient>0.8 0.6 0.1 1</ambient><diffuse>0.8 0.6 0.1 1</diffuse></material>
+      </visual>
+      <visual name="arm_1_tip_visual">
+        <pose>0.15 0 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+        <material><ambient>0.6 0.6 0.65 1</ambient><diffuse>0.6 0.6 0.65 1</diffuse></material>
+      </visual>
+      <collision name="arm_1_collision">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+      </collision>
+      <collision name="arm_1_tip_collision">
+        <pose>0.15 0 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+      </collision>
+      <!-- RESTORED: arm_1's own contact sensor -->
+      <sensor name="arm_1_contact" type="contact">
+        <contact>
+          <collision>arm_1_collision</collision>
+          <collision>arm_1_tip_collision</collision>
+          <topic>/dwarf_interceptor/arm_1/contact</topic>
+        </contact>
+        <always_on>true</always_on>
+        <update_rate>1000</update_rate>
+      </sensor>
+    </link>
+    <joint name="deploy_joint_1" type="prismatic">
+      <parent>hub_link</parent>
+      <child>arm_1</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit><lower>0</lower><upper>0.25</upper><effort>200</effort></limit>
+        <dynamics><damping>2.0</damping><friction>0.5</friction></dynamics>
+      </axis>
+    </joint>
+
+    <!-- ARM 2: -X -->
+    <link name="arm_2">
+      <pose>-0.15 0 0.25 0 0 0</pose>
+      <inertial>
+        <pose>-0.075 0 0 0 0 0</pose>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.00006</ixx><iyy>0.0027</iyy><izz>0.0027</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <visual name="arm_2_visual">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+        <material><ambient>0.8 0.6 0.1 1</ambient><diffuse>0.8 0.6 0.1 1</diffuse></material>
+      </visual>
+      <visual name="arm_2_tip_visual">
+        <pose>-0.15 0 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+        <material><ambient>0.6 0.6 0.65 1</ambient><diffuse>0.6 0.6 0.65 1</diffuse></material>
+      </visual>
+      <collision name="arm_2_collision">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+      </collision>
+      <collision name="arm_2_tip_collision">
+        <pose>-0.15 0 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+      </collision>
+      <sensor name="arm_2_contact" type="contact">
+        <contact>
+          <collision>arm_2_collision</collision>
+          <collision>arm_2_tip_collision</collision>
+          <topic>/dwarf_interceptor/arm_2/contact</topic>
+        </contact>
+        <always_on>true</always_on>
+        <update_rate>1000</update_rate>
+      </sensor>
+    </link>
+    <joint name="deploy_joint_2" type="prismatic">
+      <parent>hub_link</parent>
+      <child>arm_2</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit><lower>0</lower><upper>0.25</upper><effort>200</effort></limit>
+        <dynamics><damping>2.0</damping><friction>0.5</friction></dynamics>
+      </axis>
+    </joint>
+
+    <!-- ARM 3: +Y -->
+    <link name="arm_3">
+      <pose>0 0.15 0.25 0 0 0</pose>
+      <inertial>
+        <pose>0 0.075 0 0 0 0</pose>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.0027</ixx><iyy>0.00006</iyy><izz>0.0027</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <visual name="arm_3_visual">
+        <pose>0 0 0 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+        <material><ambient>0.8 0.6 0.1 1</ambient><diffuse>0.8 0.6 0.1 1</diffuse></material>
+      </visual>
+      <visual name="arm_3_tip_visual">
+        <pose>0 0.15 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+        <material><ambient>0.6 0.6 0.65 1</ambient><diffuse>0.6 0.6 0.65 1</diffuse></material>
+      </visual>
+      <collision name="arm_3_collision">
+        <pose>0 0 0 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+      </collision>
+      <collision name="arm_3_tip_collision">
+        <pose>0 0.15 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+      </collision>
+      <sensor name="arm_3_contact" type="contact">
+        <contact>
+          <collision>arm_3_collision</collision>
+          <collision>arm_3_tip_collision</collision>
+          <topic>/dwarf_interceptor/arm_3/contact</topic>
+        </contact>
+        <always_on>true</always_on>
+        <update_rate>1000</update_rate>
+      </sensor>
+    </link>
+    <joint name="deploy_joint_3" type="prismatic">
+      <parent>hub_link</parent>
+      <child>arm_3</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit><lower>0</lower><upper>0.25</upper><effort>200</effort></limit>
+        <dynamics><damping>2.0</damping><friction>0.5</friction></dynamics>
+      </axis>
+    </joint>
+
+    <!-- ARM 4: -Y -->
+    <link name="arm_4">
+      <pose>0 -0.15 0.25 0 0 0</pose>
+      <inertial>
+        <pose>0 -0.075 0 0 0 0</pose>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.0027</ixx><iyy>0.00006</iyy><izz>0.0027</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <visual name="arm_4_visual">
+        <pose>0 0 0 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+        <material><ambient>0.8 0.6 0.1 1</ambient><diffuse>0.8 0.6 0.1 1</diffuse></material>
+      </visual>
+      <visual name="arm_4_tip_visual">
+        <pose>0 -0.15 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+        <material><ambient>0.6 0.6 0.65 1</ambient><diffuse>0.6 0.6 0.65 1</diffuse></material>
+      </visual>
+      <collision name="arm_4_collision">
+        <pose>0 0 0 1.5708 0 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.3</length></cylinder></geometry>
+      </collision>
+      <collision name="arm_4_tip_collision">
+        <pose>0 -0.15 0 0 0 0</pose>
+        <geometry><sphere><radius>0.035</radius></sphere></geometry>
+      </collision>
+      <sensor name="arm_4_contact" type="contact">
+        <contact>
+          <collision>arm_4_collision</collision>
+          <collision>arm_4_tip_collision</collision>
+          <topic>/dwarf_interceptor/arm_4/contact</topic>
+        </contact>
+        <always_on>true</always_on>
+        <update_rate>1000</update_rate>
+      </sensor>
+    </link>
+    <joint name="deploy_joint_4" type="prismatic">
+      <parent>hub_link</parent>
+      <child>arm_4</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit><lower>0</lower><upper>0.25</upper><effort>200</effort></limit>
+        <dynamics><damping>2.0</damping><friction>0.5</friction></dynamics>
+      </axis>
+    </joint>
+
+    <!-- ================= PLUGINS ================= -->
+    <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher"/>
+    <plugin filename="gz-sim-joint-controller-system"
+            name="gz::sim::systems::JointController">
+      <joint_name>spin_joint</joint_name>
+      <topic>/model/dwarf_interceptor/joint/spin_joint/cmd_vel</topic>
+      <use_force_commands>true</use_force_commands>
+      <p_gain>0.5</p_gain>
+      <i_gain>0.05</i_gain>
+    </plugin>
+    <plugin filename="gz-sim-odometry-publisher-system"
+            name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>world</odom_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <odom_publish_frequency>100</odom_publish_frequency>
+      <dimensions>3</dimensions>
+    </plugin>
+    <plugin filename="gz-sim-velocity-control-system"
+            name="gz::sim::systems::VelocityControl">
+      <topic>/model/dwarf_interceptor/cmd_vel</topic>
+    </plugin>
+  </model>
+</sdf>

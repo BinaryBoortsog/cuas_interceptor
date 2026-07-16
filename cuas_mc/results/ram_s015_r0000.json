@@ -1,0 +1,19 @@
+{
+  "interceptor_type": "ram",
+  "error_sigma": 0.15,
+  "guidance_bias": [
+    -0.023716981436459204,
+    -0.26662013139388113,
+    0.17979357352399702
+  ],
+  "kill_contact": true,
+  "contact_detail": {
+    "arm": "arm_2",
+    "collisions": "dwarf_interceptor::arm_2::arm_2_tip_collision target_quadcopter::base_link::prop_ne_col",
+    "t": 3.0784716860000003
+  },
+  "min_miss_distance": 0.39098896151367596,
+  "time_closest_approach": 3.069920454,
+  "kill_geometric": false,
+  "duration": 3.0799227370000004
+}

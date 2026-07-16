@@ -1,0 +1,19 @@
+{
+  "interceptor_type": "flail",
+  "error_sigma": 0.3,
+  "guidance_bias": [
+    -0.3082233351227045,
+    -0.3966005965691452,
+    -0.10407385174062703
+  ],
+  "kill_contact": true,
+  "contact_detail": {
+    "arm": "arm_1",
+    "collisions": "dwarf_interceptor::arm_1::arm_1_tip_collision target_quadcopter::base_link::prop_sw_col",
+    "t": 2.7791471580000002
+  },
+  "min_miss_distance": 0.8581899891457808,
+  "time_closest_approach": 2.7832520680000004,
+  "kill_geometric": false,
+  "duration": 2.7832520680000004
+}
